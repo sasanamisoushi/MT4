@@ -14,6 +14,7 @@ Matrix4x4 Mymath::MakeRotateAxisAngle(const Vector3 &axis, float angle) {
 
     Matrix4x4 result{};
 
+
     result.m[0][0] = t * x * x + c;
     result.m[0][1] = t * x * y + s * z; 
     result.m[0][2] = t * x * z - s * y;
