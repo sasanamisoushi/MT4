@@ -1,13 +1,88 @@
-#pragma once
+﻿#pragma once
 #include "KamataEngine.h"
 
 using namespace KamataEngine;
 
+Vector3 &operator+=(Vector3 &lhv, const Vector3 &rhv);
+Vector3 &operator-=(Vector3 &lhv, const Vector3 &rhv);
+Vector3 &operator*=(Vector3 &v, float s);
+Vector3 &operator/=(Vector3 &v, float s);
+
+
+Vector3 &operator+(const Vector3 &v1, const Vector3 &v2);
+const Vector3 operator*(const Vector3 &v1, const float f);
+inline Vector3 operator-(const Vector3 &v) {
+	return { -v.x, -v.y, -v.z };
+}
+
+inline Vector3 operator-(const Vector3 &a, const Vector3 &b) {
+	return { a.x - b.x, a.y - b.y, a.z - b.z };
+}
+
+
 class Mymath {
 public:
+
+	//加算
+	Vector3 Add(const Vector3 &v1, const Vector3 &v2);
+
+	//減算
+	Vector3 Subtract(const Vector3 &v1, const Vector3 &v2);
+
+	//平行移動
+	Matrix4x4 MakeTranslateMatrix(const Vector3 &translate);
+
+	//拡大縮小
+	Matrix4x4 MkeScaleMatrix(const Vector3 &scale);
+
+	//X軸回転行列
+	Matrix4x4 MakeRoteXMatrix(float radian);
+
+	// Y軸回転行列
+	Matrix4x4 MakeRotateYMatrix(float radian);
+
+	//Z軸回転行列
+	Matrix4x4 MakeRotateZMatrix(float radian);
+
+	// 積
+	Matrix4x4 Multiply(const Matrix4x4 &m1, const Matrix4x4 &m2);
+
+	Vector3 Multiply(float scalar, const Vector3 &m1);
+
+	//ベクトルx行列
+	Vector4 Multiply(const Vector4 &v, const Matrix4x4 &m);
+
+	// アフィン変換行列
+	Matrix4x4 MakeAffineMatrix(const Vector3 &scale, const Vector3 &rotate, const Vector3 &translate);
+
+	//座標変換
+	Vector3 Transform(const Vector3 &vector, const Matrix4x4 &matrix);
+
+	//遠近投影行列
+	Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearZ, float farZ);
+
+	//正規化デバイス座標
+	Matrix4x4 MakeViewportMatrix(float width, float height);
+
+	Matrix4x4 Inverse(const Matrix4x4 &m);
+
+	//3Dベクトルの内積
+	float Dot(const Vector3 &v1, const Vector3 &v2);
+
+	// ワールド座標からスクリーン座標の変換
+	Vector3 TransformCoord(const Vector3 &v, const Matrix4x4 &m);
+
+	Vector3 Leap(const Vector3 &v1, const Vector3 &v2, float t);
+
 	Matrix4x4 MakeRotateAxisAngle(const Vector3 &axis, float sngle);
 
+	float Length(const Vector3 &v);
 
 	Vector3 Normalize(const Vector3 &v);
+
+	//クロス積
+	Vector3 Cross(const Vector3 &v1, const Vector3 &v2);
+
+	Matrix4x4 DirectionToDirection(const Vector3 &from, const Vector3 &to);
 };
 

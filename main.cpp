@@ -3,7 +3,7 @@
 
 const char kWindowTitle[] = "LE2C_16_sasnami_sousi";
 
-Mymath math_;
+Mymath myMath_;
 
 
 static const int kRowHeight = 30;
@@ -40,12 +40,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 		
+		Vector3 from0 = myMath_.Normalize(Vector3{ 1.0f,0.7f,0.5f });
+		Vector3 to0 = -from0;
+		Vector3 from1 = myMath_.Normalize(Vector3{ -0.6f,0.9f,0.2f });
+		Vector3 to1 = myMath_.Normalize(Vector3{ 0.4f,0.7f,-0.5f });
+		Matrix4x4 rotateMatrix0 = myMath_.DirectionToDirection(
+			myMath_.Normalize(Vector3{ 1.0f,0.0f,0.0f }), myMath_.Normalize(Vector3{ -1.0f,0.0f,0.0f }));
 
-		Vector3 axis = math_.Normalize({ 1.0f,1.0f,1.0f });
+		Matrix4x4 rotateMatrix1 = myMath_.DirectionToDirection(from0, to0);
+		Matrix4x4 rotateMatrix2 = myMath_.DirectionToDirection(from1, to1);
 
-		float angle = 0.44f;
-
-		Matrix4x4 rotateMatrix = math_.MakeRotateAxisAngle(axis, angle);
 
 		///
 		/// ↑更新処理ここまで
@@ -55,7 +59,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		MatrixScreenPrintf(10, 30, rotateMatrix, "rotateMatrix");
+		MatrixScreenPrintf(0, 30,rotateMatrix0,"rotateMatrix0");
+		MatrixScreenPrintf(0, kRowHeight * 6, rotateMatrix1, "rotateMatrix1");
+		MatrixScreenPrintf(0, kRowHeight * 11, rotateMatrix2, "rotateMatrix2");
 
 		///
 		/// ↑描画処理ここまで
