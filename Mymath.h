@@ -78,7 +78,7 @@ public:
 
 	float Length(const Vector3 &v);
 
-	Vector3 Normalize(const Vector3 &v);
+	static Vector3 Normalize(const Vector3 &v);
 
 	//クロス積
 	Vector3 Cross(const Vector3 &v1, const Vector3 &v2);
