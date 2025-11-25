@@ -10,6 +10,7 @@ struct Quaternion {
    
 };
 
+
 struct QuaternionMath {
 public:
     //積
@@ -38,4 +39,11 @@ public:
 
 	//Quaternionから回転行列を作成
 	Matrix4x4 MakeRotateMatrix(const Quaternion &quaternion);
+
+	//球面線形補間
+	Quaternion Slerp(const Quaternion &q0, const Quaternion &q1, float t);
+
+    //内積
+    float Dot(const Quaternion &q1, const Quaternion &q2);
+
 };

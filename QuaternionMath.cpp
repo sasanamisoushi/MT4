@@ -1,5 +1,8 @@
-﻿#include "QuaternionMath.h"  
-#include <cmath>  
+﻿#define NOMINMAX
+#include <Windows.h>
+#include "QuaternionMath.h"  
+#include <cmath>
+#include <algorithm>
  
 
 
@@ -152,4 +155,66 @@ Matrix4x4 QuaternionMath::MakeRotateMatrix(const Quaternion &quaternion) {
     m.m[3][3] = 1.0f;
 
     return m;
+}
+
+Quaternion QuaternionMath::Slerp(const Quaternion &q0, const Quaternion &q1, float t) {
+    // t をクランプ（安全のため）
+    if (t <= 0.0f) return q0;
+    if (t >= 1.0f) return q1;
+
+    Quaternion q0n = Normalize(q0);
+    Quaternion q1n = Normalize(q1);
+
+    float cosTheta = Dot(q0n, q1n);
+
+    // 最短経路を取るため、内積が負なら q1 を反転する
+    if (cosTheta < 0.0f) {
+        q1n.x = -q1n.x; q1n.y = -q1n.y; q1n.z = -q1n.z; q1n.w = -q1n.w;
+        cosTheta = -cosTheta;
+    }
+
+    const float kEpsilon = 1e-6f;
+    // 角度が非常に小さい（ほぼ同じ向き）場合は線形補間して正規化（数値安定化）
+    if (cosTheta > 1.0f - 1e-6f) {
+        // LERP: q = (1-t)*q0 + t*q1
+        Quaternion result = {
+            q0.x + t * (q1.x - q0.x),
+            q0.y + t * (q1.y - q0.y),
+            q0.z + t * (q1.z - q0.z),
+            q0.w + t * (q1.w - q0.w)
+        };
+        return Normalize(result);
+    } else {
+        // 通常のSLERP
+        float theta = std::acos(std::min(std::max(cosTheta, -1.0f), 1.0f)); // 角度
+        float sinTheta = std::sin(theta);
+
+        // 安全対策（ゼロ除算回避）
+        if (std::fabs(sinTheta) < kEpsilon) {
+            // sinTheta が小さいならLERPにフォールバック
+            Quaternion result = {
+                q0.x + t * (q1.x - q0.x),
+                q0.y + t * (q1.y - q0.y),
+                q0.z + t * (q1.z - q0.z),
+                q0.w + t * (q1.w - q0.w)
+            };
+            return Normalize(result);
+        }
+
+        float a = std::sin((1.0f - t) * theta) / sinTheta;
+        float b = std::sin(t * theta) / sinTheta;
+
+        Quaternion result = {
+            a * q0.x + b * q1.x,
+            a * q0.y + b * q1.y,
+            a * q0.z + b * q1.z,
+            a * q0.w + b * q1.w
+        };
+
+        return Normalize(result);
+    }
+}
+
+float QuaternionMath::Dot(const Quaternion &q1, const Quaternion &q2) {
+    return q1.x * q2.x +q1.y * q2.y +q1.z * q2.z +q1.w * q2.w;
 }
